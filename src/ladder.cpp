@@ -1,7 +1,7 @@
 #ifndef WORD_LADDER_H
 #define WORD_LADDER_H
 
-#include "dijkstra.h"
+#include "dijkstras.h"
 #include "ladder.h"
 
 void error(const string& word1, const string& word2, const string& msg) {
