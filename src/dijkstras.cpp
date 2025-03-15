@@ -1,26 +1,26 @@
 #include "dijkstras.h"
 
-vector<int> dijkstra_shortest_path(const Graph& graph, int source, vector<int>& previous) {
-    int numVertices = graph.numVertices;
+vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
+    int numVertices = G.numVertices;
     vector<int> distances(numVertices, INF);
     previous.assign(numVertices, -1);
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
 
     distances[source] = 0;
-    minHeap.emplace(0, source);
+    pq.emplace(0, source);
 
-    while (!minHeap.empty()) {
-        auto [currDist, u] = minHeap.top();
-        minHeap.pop();
+    while (!pq.empty()) {
+        auto [currDist, u] = pq.top();
+        pq.pop();
 
-        if (currDist > distances[u]) continue;
+        if (currDist > distances[u]) continue; // Skip outdated entries
 
-        for (const Edge& edge : graph[u]) {
+        for (const Edge& edge : G[u]) {
             int v = edge.dst, weight = edge.weight;
             if (distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
                 previous[v] = u;
-                minHeap.emplace(distances[v], v);
+                pq.emplace(distances[v], v);
             }
         }
     }
@@ -28,7 +28,7 @@ vector<int> dijkstra_shortest_path(const Graph& graph, int source, vector<int>& 
     return distances;
 }
 
-vector<int> extract_shortest_path(const vector<int>& previous, int destination) {
+vector<int> extract_shortest_path(const vector<int>& /*distances*/, const vector<int>& previous, int destination) {
     vector<int> path;
     for (int i = destination; i != -1; i = previous[i]) {
         path.push_back(i);
@@ -37,16 +37,16 @@ vector<int> extract_shortest_path(const vector<int>& previous, int destination) 
     return path;
 }
 
-void print_path(const vector<int>& path, int total) {
-    if (path.empty()) {
+void print_path(const vector<int>& v, int total) {
+    if (v.empty()) {
         cout << "No path found" << endl;
         return;
     }
 
     cout << "Shortest path: ";
-    for (size_t i = 0; i < path.size(); ++i) {
-        cout << path[i];
-        if (i < path.size() - 1) cout << " ";
+    for (size_t i = 0; i < v.size(); ++i) {
+        cout << v[i];
+        if (i < v.size() - 1) cout << " ";
     }
     cout << "\nTotal distance: " << total << endl;
 }
