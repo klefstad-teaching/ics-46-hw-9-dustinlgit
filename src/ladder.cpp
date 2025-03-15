@@ -1,72 +1,100 @@
 #include "ladder.h"
 #include "dijkstras.h"
 
-// Check if two words differ by exactly one letter
-bool is_adjacent(const string& word1, const string& word2) {
-    int count = 0;
-    for (size_t i = 0; i < word1.size(); i++) {
-        if (word1[i] != word2[i]) count++;
-        if (count > 1) return false;
-    }
-    return count == 1;
+void error(string word1, string word2, string msg) {
+    cerr << "Error: " << msg << " (" << word1 << " -> " << word2 << ")" << endl;
+    exit(EXIT_FAILURE);
 }
 
-// Convert words into a graph representation for Dijkstra
-void build_graph(const set<string>& word_list, map<string, int>& word_index, Graph& G) {
-    int index = 0;
-    for (const string& word : word_list) {
-        word_index[word] = index++;
+bool edit_distance_within(const string& str1, const string& str2, int d) {
+    if (str1.length() != str2.length()) return false;
+    int count = 0;
+    for (size_t i = 0; i < str1.length(); ++i) {
+        if (str1[i] != str2[i]) {
+            count++;
+            if (count > d) return false;
+        }
     }
-    G.numVertices = word_list.size();
-    G.resize(G.numVertices);
+    return count == d;
+}
 
-    for (const string& w1 : word_list) {
-        for (const string& w2 : word_list) {
-            if (is_adjacent(w1, w2)) {
-                G[word_index[w1]].push_back(Edge(word_index[w1], word_index[w2], 1));
+bool is_adjacent(const string& word1, const string& word2) {
+    return edit_distance_within(word1, word2, 1);
+}
+
+void load_words(set<string>& word_list, const string& file_name) {
+    ifstream file(file_name);
+    if (!file) {
+        cerr << "Cannot open file: " << file_name << endl;
+        exit(EXIT_FAILURE);
+    }
+    string word;
+    while (file >> word) {
+        word_list.insert(word);
+    }
+    file.close();
+}
+
+Graph build_graph(const set<string>& word_list) {
+    Graph G;
+    vector<string> words(word_list.begin(), word_list.end());
+    int n = words.size();
+    G.numVertices = n;
+    G.resize(n);
+    map<string, int> word_index;
+    for (int i = 0; i < n; i++) {
+        word_index[words[i]] = i;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (is_adjacent(words[i], words[j])) {
+                G[i].emplace_back(i, j, 1);
+                G[j].emplace_back(j, i, 1);
             }
         }
     }
+    return G;
 }
 
-// Generate the shortest word ladder using Dijkstra
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     if (word_list.find(begin_word) == word_list.end() || word_list.find(end_word) == word_list.end()) {
-        return {};
+        error(begin_word, end_word, "Both words must be in the dictionary");
     }
-
+    Graph G = build_graph(word_list);
+    vector<string> words(word_list.begin(), word_list.end());
     map<string, int> word_index;
-    Graph G;
-    build_graph(word_list, word_index, G);
-
-    vector<int> previous(G.numVertices, -1);
+    for (int i = 0; i < words.size(); i++) {
+        word_index[words[i]] = i;
+    }
+    vector<int> previous;
     vector<int> distances = dijkstra_shortest_path(G, word_index[begin_word], previous);
-
-    // Extract the shortest path
-    vector<int> path_indices = extract_shortest_path(distances, previous, word_index[end_word]);
-    if (path_indices.empty()) return {};
-
-    // Convert indices back to words
-    vector<string> path;
-    map<int, string> index_word;
-    for (const auto& [word, idx] : word_index) {
-        index_word[idx] = word;
+    vector<int> path = extract_shortest_path(distances, previous, word_index[end_word]);
+    vector<string> word_ladder;
+    for (int index : path) {
+        word_ladder.push_back(words[index]);
     }
-    for (int idx : path_indices) {
-        path.push_back(index_word[idx]);
-    }
-
-    return path;
+    return word_ladder;
 }
 
-// Print the word ladder
 void print_word_ladder(const vector<string>& ladder) {
     if (ladder.empty()) {
-        cout << "No transformation sequence found." << endl;
-    } else {
-        for (const string& word : ladder) {
-            cout << word << " ";
-        }
-        cout << endl;
+        cout << "No word ladder found." << endl;
+        return;
     }
+    for (const auto& word : ladder) {
+        cout << word << " ";
+    }
+    cout << endl;
+}
+
+void verify_word_ladder() {
+    set<string> word_list;
+    load_words(word_list, "words.txt");
+    string begin_word, end_word;
+    cout << "Enter start word: ";
+    cin >> begin_word;
+    cout << "Enter end word: ";
+    cin >> end_word;
+    vector<string> ladder = generate_word_ladder(begin_word, end_word, word_list);
+    print_word_ladder(ladder);
 }
