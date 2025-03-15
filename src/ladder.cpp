@@ -31,15 +31,30 @@ void load_words(set<string>& word_list, const string& file_name) {
     file.close();
 }
 
-void WordLadderGraph::build_graph(const set<string>& word_list) {
-    for (const string& word : word_list) {
-        for (const string& potential : word_list) {
-            if (is_adjacent(word, potential)) {
-                adjacency_list[word].push_back(potential);
+struct WordLadderGraph {
+    map<string, vector<Edge>> adjacency_list;
+    map<string, int> word_to_index;
+    vector<string> index_to_word;
+
+    void build_graph(const set<string>& word_list) {
+        int index = 0;
+        for (const string& word : word_list) {
+            word_to_index[word] = index;
+            index_to_word.push_back(word);
+            index++;
+        }
+        
+        for (const string& word : word_list) {
+            int u = word_to_index[word];
+            for (const string& potential : word_list) {
+                if (is_adjacent(word, potential)) {
+                    int v = word_to_index[potential];
+                    adjacency_list[word].push_back(Edge(u, v, 1));
+                }
             }
         }
     }
-}
+};
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     if (word_list.find(begin_word) == word_list.end() || word_list.find(end_word) == word_list.end()) {
@@ -47,34 +62,20 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     }
     WordLadderGraph graph;
     graph.build_graph(word_list);
+
+    int source = graph.word_to_index[begin_word];
+    int destination = graph.word_to_index[end_word];
+    vector<int> previous;
     
-    map<string, string> previous;
-    map<string, int> distances;
-    for (const string& word : word_list) distances[word] = INT_MAX;
-    distances[begin_word] = 0;
+    vector<int> distances = dijkstra_shortest_path(graph.adjacency_list, source, previous);
     
-    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<>> pq;
-    pq.emplace(0, begin_word);
+    if (distances[destination] == INF) return {};
     
-    while (!pq.empty()) {
-        auto [dist, word] = pq.top(); pq.pop();
-        if (word == end_word) break;
-        for (const string& neighbor : graph.adjacency_list[word]) {
-            if (dist + 1 < distances[neighbor]) {
-                distances[neighbor] = dist + 1;
-                previous[neighbor] = word;
-                pq.emplace(distances[neighbor], neighbor);
-            }
-        }
-    }
-    
-    if (distances[end_word] == INT_MAX) return {};
-    
+    vector<int> path_indices = extract_shortest_path(distances, previous, destination);
     vector<string> path;
-    for (string at = end_word; !at.empty(); at = previous[at]) {
-        path.push_back(at);
+    for (int index : path_indices) {
+        path.push_back(graph.index_to_word[index]);
     }
-    reverse(path.begin(), path.end());
     return path;
 }
 
@@ -89,5 +90,6 @@ void print_word_ladder(const vector<string>& ladder) {
     }
     cout << endl;
 }
+
 
 #endif
