@@ -56,6 +56,7 @@ bool is_adjacent(const string& word1, const string& word2) {
     return diff_count == 1;
 }
 
+
 void load_words(set<string> & word_list, const string& file_name) {
     ifstream file(file_name);
     string word;
@@ -94,9 +95,10 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    // If start and end words are the same, return a ladder with just that word
     if (begin_word == end_word) {
-        return {begin_word};
+        vector<string> ret; 
+        ret.push_back(begin_word);
+        return ret;
     }
 
     queue<vector<string>> ladders;
@@ -105,41 +107,29 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     visited.insert(begin_word);
 
     while (!ladders.empty()) {
-        vector<string> current_ladder = ladders.front();
-        ladders.pop();
-        string last_word = current_ladder.back();
+        int level_size = ladders.size();
 
-        // Check if the last word is already the end word
-        if (last_word == end_word) {
-            return current_ladder;
-        }
+        for (int i = 0; i < level_size; ++i) {
+            vector<string> current_ladder = ladders.front();
+            ladders.pop();
+            string last_word = current_ladder.back();
 
-        // Try all words in the dictionary
-        for (const string& word : word_list) {
-            // Skip words we've already visited
-            if (visited.find(word) != visited.end()) {
-                continue;
-            }
+            for (const string& word : word_list) {
+                if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
+                    if (word == end_word) {
+                        current_ladder.push_back(word);
+                        return current_ladder; 
+                    }
 
-            // Check if this word is adjacent to the last word in our current ladder
-            if (is_adjacent(last_word, word)) {
-                visited.insert(word); // Mark as visited immediately to prevent enqueuing multiple times
-                
-                // Create a new ladder by copying the current one and adding the new word
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(word);
-                
-                // If we've reached the end word, return the ladder
-                if (word == end_word) {
-                    return new_ladder;
+                    visited.insert(word);
+                    vector<string> new_ladder = current_ladder;
+                    new_ladder.push_back(word);
+                    ladders.push(new_ladder);
                 }
-                
-                // Otherwise, add this new ladder to our queue
-                ladders.push(new_ladder);
             }
         }
     }
-
-    // If no ladder is found, return an empty ladder
+    
     return {};
 }
+
