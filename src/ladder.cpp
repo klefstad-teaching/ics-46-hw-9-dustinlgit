@@ -94,41 +94,30 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if(begin_word == end_word){ 
-        vector<string> ret;
-        ret.push_back(begin_word);
-        return ret;
+    if (begin_word == end_word) {
+        return {begin_word};
     }
-    
-    queue<vector<string>> ladders;
+    queue<vector<string>> ladder_queue;
+    ladder_queue.push({begin_word});
     set<string> visited;
-    ladders.push({begin_word});
     visited.insert(begin_word);
-
-    while (!ladders.empty()) {
-        int level_size = ladders.size();
-
-        for (int i = 0; i < level_size; ++i) {
-            vector<string> current_ladder = ladders.front();
-            ladders.pop();
-            string last_word = current_ladder.back();
-
-            for (const string& word : word_list) {
-                if (is_adjacent(last_word, word) && (visited.find(word) == visited.end())) {
-                    if (word == end_word) {
-                        current_ladder.push_back(word);
-                        return current_ladder;
-                    }
-
+    while (!ladder_queue.empty()) {
+        vector<string> ladder = ladder_queue.front();
+        ladder_queue.pop();
+        string last_word = ladder.back();
+        for (const string& word : word_list) {
+            if (is_adjacent(last_word, word)) {
+                if (visited.find(word) == visited.end()) {
                     visited.insert(word);
-                    vector<string> new_ladder = current_ladder;
+                    vector<string> new_ladder = ladder;
                     new_ladder.push_back(word);
-                    ladders.push(new_ladder);
+                    if (word == end_word) {
+                        return new_ladder;
+                    }
+                    ladder_queue.push(new_ladder);
                 }
             }
         }
     }
-
-    // No ladder found, returning an empty ladder
     return {};
 }
