@@ -24,14 +24,28 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     return dp[m][n] <= d;
 }
 
-// Check if two words differ by exactly one letter
 bool is_adjacent(const string& word1, const string& word2) {
     // If the words are identical, they are adjacent in the word ladder.
     if (word1 == word2) {
         return true;
     }
 
-    // Check if the words differ by exactly one character
+    // If the length of the words differs by exactly one character, check for adjacency by one character addition/removal.
+    if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
+        const string& shorter = word1.length() < word2.length() ? word1 : word2;
+        const string& longer = word1.length() > word2.length() ? word1 : word2;
+        
+        // Try removing one character from the longer word to match the shorter word
+        for (size_t i = 0; i < longer.length(); ++i) {
+            string temp = longer;
+            temp.erase(i, 1);  // Remove one character
+            if (temp == shorter) {
+                return true;  // They are adjacent if removing one character matches the shorter word
+            }
+        }
+    }
+
+    // Otherwise, check for one character difference
     int diff_count = 0;
     if (word1.length() != word2.length()) {
         return false;
@@ -41,12 +55,13 @@ bool is_adjacent(const string& word1, const string& word2) {
         if (word1[i] != word2[i]) {
             ++diff_count;
             if (diff_count > 1) {
-                return false;  // More than one character difference
+                return false;
             }
         }
     }
     return diff_count == 1;
 }
+
 
 // Load words from file into set
 void load_words(set<string> & word_list, const string& file_name) {
@@ -58,7 +73,6 @@ void load_words(set<string> & word_list, const string& file_name) {
     file.close();
 }
 
-// Print word ladder
 void print_word_ladder(const vector<string>& ladder) {
     if (ladder.empty()) {
         cout << "No word ladder found.\n";
@@ -70,6 +84,7 @@ void print_word_ladder(const vector<string>& ladder) {
         cout << "\n";
     }
 }
+
 
 
 // Verify word ladder
@@ -90,7 +105,6 @@ void verify_word_ladder(const vector<string>& ladder) {
     cout << "The word ladder is valid." << endl;
 }
 
-// Generate word ladder using BFS
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     // If the begin word and end word are the same, return immediately with a ladder of size 1.
     if (begin_word == end_word) {
