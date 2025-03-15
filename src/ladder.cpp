@@ -94,10 +94,12 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) {
-        return {begin_word};
+    if(begin_word == end_word){ 
+        vector<string> ret;
+        ret.push_back(begin_word);
+        return ret;
     }
-
+    
     queue<vector<string>> ladders;
     set<string> visited;
     ladders.push({begin_word});
@@ -112,7 +114,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             string last_word = current_ladder.back();
 
             for (const string& word : word_list) {
-                if (is_adjacent(last_word, word) && visited.find(word) == visited.end()) {
+                if (is_adjacent(last_word, word) && (visited.find(word) == visited.end())) {
                     if (word == end_word) {
                         current_ladder.push_back(word);
                         return current_ladder;
