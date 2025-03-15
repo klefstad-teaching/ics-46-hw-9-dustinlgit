@@ -119,5 +119,5 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             }
         }
     }
-    return {begin_word};
+    return {};
 }
