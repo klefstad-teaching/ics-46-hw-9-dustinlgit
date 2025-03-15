@@ -21,40 +21,79 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     return dp[m][n] <= d;
 }
 
+// bool is_adjacent(const string& word1, const string& word2) {
+//     if (word1 == word2) {
+//         return true;
+//     }
+
+//     if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
+//         const string& shorter = word1.length() < word2.length() ? word1 : word2;
+//         const string& longer = word1.length() > word2.length() ? word1 : word2;
+
+//         for (size_t i = 0; i < longer.length(); ++i) {
+//             string temp = longer;
+//             temp.erase(i, 1);
+
+//             if (temp == shorter) {
+//                 return true;
+//             }
+//         }
+//     }
+
+//     int diff_count = 0;
+//     if (word1.length() != word2.length()) {
+//         return false;
+//     }
+
+//     for (size_t i = 0; i < word1.length(); ++i) {
+//         if (word1[i] != word2[i]) {
+//             ++diff_count;
+//             if (diff_count > 1) {
+//                 return false;
+//             }
+//         }
+//     }
+//     return diff_count == 1;
+// }
+
 bool is_adjacent(const string& word1, const string& word2) {
-    if (word1 == word2) {
-        return true;
+    int len1 = word1.length(), len2 = word2.length();
+
+    // If words are exactly the same, they are not adjacent
+    if (word1 == word2) return false;
+
+    // If length difference is more than 1, they can't be adjacent
+    if (abs(len1 - len2) > 1) return false;
+
+    // Case 1: Words differ by exactly one letter (same length)
+    if (len1 == len2) {
+        int diff_count = 0;
+        for (size_t i = 0; i < len1; ++i) {
+            if (word1[i] != word2[i] && ++diff_count > 1) return false;
+        }
+        return diff_count == 1;
     }
 
-    if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
-        const string& shorter = word1.length() < word2.length() ? word1 : word2;
-        const string& longer = word1.length() > word2.length() ? word1 : word2;
+    // Case 2: Words differ by exactly one letter due to insertion/removal
+    const string &shorter = len1 < len2 ? word1 : word2;
+    const string &longer = len1 > len2 ? word1 : word2;
 
-        for (size_t i = 0; i < longer.length(); ++i) {
-            string temp = longer;
-            temp.erase(i, 1);
-
-            if (temp == shorter) {
-                return true;
-            }
+    size_t i = 0, j = 0;
+    bool difference_found = false;
+    
+    while (i < shorter.length() && j < longer.length()) {
+        if (shorter[i] != longer[j]) {
+            if (difference_found) return false; // More than one mismatch
+            difference_found = true;
+            ++j; // Skip one character in the longer word
+        } else {
+            ++i; 
+            ++j;
         }
     }
-
-    int diff_count = 0;
-    if (word1.length() != word2.length()) {
-        return false;
-    }
-
-    for (size_t i = 0; i < word1.length(); ++i) {
-        if (word1[i] != word2[i]) {
-            ++diff_count;
-            if (diff_count > 1) {
-                return false;
-            }
-        }
-    }
-    return diff_count == 1;
+    return true; // If only one mismatch is found
 }
+
 
 void load_words(set<string>& word_list, const string& file_name) {
     ifstream file(file_name);
