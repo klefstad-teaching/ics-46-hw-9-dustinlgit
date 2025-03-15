@@ -94,9 +94,9 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) {
-        return {begin_word};
-    }
+    // if (begin_word == end_word) {
+    //     return {begin_word};
+    // }
     queue<vector<string>> ladder_queue;
     ladder_queue.push({begin_word});
     set<string> visited;
