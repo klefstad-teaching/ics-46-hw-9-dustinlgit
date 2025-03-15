@@ -2,8 +2,6 @@
 #include "dijkstras.h"
 
 
-sing namespace std;
-
 void error(string word1, string word2, string msg) {
     cerr << "Error: " << msg << " (" << word1 << ", " << word2 << ")" << endl;
 }
