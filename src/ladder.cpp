@@ -23,7 +23,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
 
 bool is_adjacent(const string& word1, const string& word2) {
     if (word1 == word2) {
-        return false;
+        return true;
     }
 
     if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
@@ -85,7 +85,7 @@ void verify_word_ladder(const vector<string>& ladder) {
 
     for (size_t i = 1; i < ladder.size(); i++) {
         if (!is_adjacent(ladder[i - 1], ladder[i])) {
-            cout << "Error: The words '" << ladder[i - 1] << "' and '" << ladder[i] << "' are not adjacent!" << endl;
+            cout << "Error: [" << ladder[i - 1] << ", " << ladder[i] << "] not adjacent" << endl;
             return;
         }
     }
