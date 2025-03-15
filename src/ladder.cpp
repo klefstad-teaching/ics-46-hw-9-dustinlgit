@@ -65,13 +65,13 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     for (size_t i = 0; i < words.size(); i++) {
         word_index[words[i]] = i;
     }
-    vector<int> previous;
-    vector<int> distances = dijkstra_shortest_path(G, word_index[begin_word], previous);
-    vector<int> path = extract_shortest_path(distances, previous, word_index[end_word]);
+    // vector<int> previous;
+    // vector<int> distances = dijkstra_shortest_path(G, word_index[begin_word], previous);
+    // vector<int> path = extract_shortest_path(distances, previous, word_index[end_word]);
     vector<string> word_ladder;
-    for (int index : path) {
-        word_ladder.push_back(words[index]);
-    }
+    // for (int index : path) {
+    //     word_ladder.push_back(words[index]);
+    // }
     return word_ladder;
 }
 
