@@ -97,9 +97,10 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-
+    
+    // If the start word is the same as the end word, return an empty ladder
     if (begin_word == end_word) {
-        return {begin_word};
+        return {}; // Empty ladder (size 0)
     }
 
     queue<vector<string>> ladders;
@@ -116,10 +117,11 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             string last_word = current_ladder.back();
 
             for (const string& word : word_list) {
-                if (is_adjacent(last_word, word) && visited.find(word) == visited.end()) {
+                // Avoid revisiting the word or the start word
+                if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
                     if (word == end_word) {
                         current_ladder.push_back(word);
-                        return current_ladder;
+                        return current_ladder; // Found the word ladder
                     }
 
                     visited.insert(word);
@@ -131,6 +133,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         }
     }
 
-    // No ladder found, returning an empty ladder
-    return {};
+    // If no ladder is found, return an empty ladder
+    return {}; // Return empty ladder if no solution is found
 }
+
