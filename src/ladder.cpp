@@ -42,7 +42,7 @@ bool is_adjacent(const string& word1, const string& word2) {
     }
 
     return diff_count == 1; 
-
+}
 //implemenation 2
 
 // bool is_adjacent(const string& word1, const string& word2) {
