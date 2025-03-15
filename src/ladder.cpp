@@ -1,5 +1,6 @@
 #include "ladder.h"
 
+// Error handling function
 void error(string word1, string word2, string msg) {
     cout << "Error between words: '" << word1 << "' and '" << word2 << "': " << msg << endl;
 }
@@ -60,14 +61,29 @@ void print_word_ladder(const vector<string>& ladder) {
 }
 
 // Verify word ladder
-void verify_word_ladder() {
-    // This function should verify if the word ladder is valid.
-    // It will ensure that each word differs from the previous one by exactly one letter.
-    // If the ladder is not valid, an error message will be printed.
+void verify_word_ladder(const vector<string>& ladder) {
+    if (ladder.empty()) {
+        cout << "The ladder is empty!" << endl;
+        return;
+    }
+
+    // Check that each consecutive pair of words differs by exactly one letter
+    for (size_t i = 1; i < ladder.size(); i++) {
+        if (!is_adjacent(ladder[i - 1], ladder[i])) {
+            cout << "Error: The words '" << ladder[i - 1] << "' and '" << ladder[i] << "' are not adjacent!" << endl;
+            return;
+        }
+    }
+
+    cout << "The word ladder is valid." << endl;
 }
 
 // Generate word ladder using BFS
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    if (begin_word == end_word) {
+        return {begin_word};
+    }
+
     queue<vector<string>> q;
     set<string> visited;
 
@@ -78,9 +94,6 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         vector<string> path = q.front();
         q.pop();
         string last_word = path.back();
-
-        // If we reached the target word, return the path
-        if (last_word == end_word) return path;
 
         // Try changing each letter in the word
         for (size_t i = 0; i < last_word.size(); i++) {
@@ -93,6 +106,12 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     visited.insert(new_word);
                     vector<string> new_path = path;
                     new_path.push_back(new_word);
+
+                    // If we reached the target word, return the path
+                    if (new_word == end_word) {
+                        return new_path;
+                    }
+
                     q.push(new_path);
                 }
             }
