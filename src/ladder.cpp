@@ -23,15 +23,28 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
 
 bool is_adjacent(const string& word1, const string& word2) {
     if (word1 == word2) {
-        return false;
+        return true;
     }
 
+    if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
+        const string& shorter = word1.length() < word2.length() ? word1 : word2;
+        const string& longer = word1.length() > word2.length() ? word1 : word2;
+
+        for (size_t i = 0; i < longer.length(); ++i) {
+            string temp = longer;
+            temp.erase(i, 1);
+
+            if (temp == shorter) {
+                return true;
+            }
+        }
+    }
+
+    int diff_count = 0;
     if (word1.length() != word2.length()) {
         return false;
     }
 
-    int diff_count = 0;
-    
     for (size_t i = 0; i < word1.length(); ++i) {
         if (word1[i] != word2[i]) {
             ++diff_count;
@@ -40,45 +53,8 @@ bool is_adjacent(const string& word1, const string& word2) {
             }
         }
     }
-
-    return diff_count == 1; 
+    return diff_count == 1;
 }
-//implemenation 2
-
-// bool is_adjacent(const string& word1, const string& word2) {
-//     if (word1 == word2) {
-//         return true;
-//     }
-
-//     if (abs(static_cast<int>(word1.length()) - static_cast<int>(word2.length())) == 1) {
-//         const string& shorter = word1.length() < word2.length() ? word1 : word2;
-//         const string& longer = word1.length() > word2.length() ? word1 : word2;
-
-//         for (size_t i = 0; i < longer.length(); ++i) {
-//             string temp = longer;
-//             temp.erase(i, 1);
-
-//             if (temp == shorter) {
-//                 return true;
-//             }
-//         }
-//     }
-
-//     int diff_count = 0;
-//     if (word1.length() != word2.length()) {
-//         return false;
-//     }
-
-//     for (size_t i = 0; i < word1.length(); ++i) {
-//         if (word1[i] != word2[i]) {
-//             ++diff_count;
-//             if (diff_count > 1) {
-//                 return false;
-//             }
-//         }
-//     }
-//     return diff_count == 1;
-// }
 
 void load_words(set<string>& word_list, const string& file_name) {
     ifstream file(file_name);
