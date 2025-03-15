@@ -78,8 +78,6 @@ void print_word_ladder(const vector<string>& ladder) {
     }
 }
 
-
-
 void verify_word_ladder(const vector<string>& ladder) {
     if (ladder.empty()) {
         cout << "The ladder is empty!" << endl;
@@ -97,43 +95,42 @@ void verify_word_ladder(const vector<string>& ladder) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    
-    // If the start word is the same as the end word, return an empty ladder
-    if (begin_word == end_word) {
-        return {}; // Empty ladder (size 0)
-    }
+    vector<string> stuff;
+    return stuff;
+    // if (begin_word == end_word) {
+    //     return {};
+    // }
 
-    queue<vector<string>> ladders;
-    set<string> visited;
-    ladders.push({begin_word});
-    visited.insert(begin_word);
+    // queue<vector<string>> ladders;
+    // set<string> visited;
+    // ladders.push({begin_word});
+    // visited.insert(begin_word);
 
-    while (!ladders.empty()) {
-        int level_size = ladders.size();
+    // while (!ladders.empty()) {
+    //     int level_size = ladders.size();
 
-        for (int i = 0; i < level_size; ++i) {
-            vector<string> current_ladder = ladders.front();
-            ladders.pop();
-            string last_word = current_ladder.back();
+    //     for (int i = 0; i < level_size; ++i) {
+    //         vector<string> current_ladder = ladders.front();
+    //         ladders.pop();
+    //         string last_word = current_ladder.back();
 
-            for (const string& word : word_list) {
-                // Avoid revisiting the word or the start word
-                if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
-                    if (word == end_word) {
-                        current_ladder.push_back(word);
-                        return current_ladder; // Found the word ladder
-                    }
+    //         for (const string& word : word_list) {
+    //             if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
+    //                 if (word == end_word) {
+    //                     current_ladder.push_back(word);
+    //                     return current_ladder; 
+    //                 }
 
-                    visited.insert(word);
-                    vector<string> new_ladder = current_ladder;
-                    new_ladder.push_back(word);
-                    ladders.push(new_ladder);
-                }
-            }
-        }
-    }
+    //                 visited.insert(word);
+    //                 vector<string> new_ladder = current_ladder;
+    //                 new_ladder.push_back(word);
+    //                 ladders.push(new_ladder);
+    //             }
+    //         }
+    //     }
+    // }
 
-    // If no ladder is found, return an empty ladder
-    return {}; // Return empty ladder if no solution is found
+    // // If no ladder is found, return an empty ladder
+    // return {}; // Return empty ladder if no solution is found
 }
 
