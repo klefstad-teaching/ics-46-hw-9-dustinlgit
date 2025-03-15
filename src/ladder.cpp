@@ -116,7 +116,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     }
                     ladder_queue.push(new_ladder);
                 }
-                visted.insert(word);
+                visited.insert(word);
             }
         }
     }
