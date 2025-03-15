@@ -60,7 +60,7 @@ bool is_adjacent(const string& word1, const string& word2) {
     int len1 = word1.length(), len2 = word2.length();
 
     // If words are exactly the same, they are not adjacent
-    if (word1 == word2) return false;
+    if (word1 == word2) return true;
 
     // If length difference is more than 1, they can't be adjacent
     if (abs(len1 - len2) > 1) return false;
