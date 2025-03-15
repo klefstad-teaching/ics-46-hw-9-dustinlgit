@@ -102,14 +102,14 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         return {begin_word};
     }
 
-    queue<vector<string>> ladders; 
-    set<string> visited; 
+    queue<vector<string>> ladders;
+    set<string> visited;
     ladders.push({begin_word});
     visited.insert(begin_word);
 
     while (!ladders.empty()) {
         int level_size = ladders.size();
-        
+
         for (int i = 0; i < level_size; ++i) {
             vector<string> current_ladder = ladders.front();
             ladders.pop();
@@ -119,7 +119,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                 if (is_adjacent(last_word, word) && visited.find(word) == visited.end()) {
                     if (word == end_word) {
                         current_ladder.push_back(word);
-                        return current_ladder; 
+                        return current_ladder;
                     }
 
                     visited.insert(word);
@@ -130,5 +130,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             }
         }
     }
-    return {begin_word}; 
+
+    // No ladder found, returning an empty ladder
+    return {};
 }
