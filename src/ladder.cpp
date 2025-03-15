@@ -2,8 +2,7 @@
 #include "dijkstras.h"
 
 void error(string word1, string word2, string msg) {
-    cerr << "Error: " << msg << " (" << word1 << " -> " << word2 << ")" << endl;
-    exit(EXIT_FAILURE);
+    cout << "Error: " << msg << " (" << word1 << " " << word2 << ")" << endl;
 }
 
 bool edit_distance_within(const string& str1, const string& str2, int d) {
@@ -63,7 +62,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     Graph G = build_graph(word_list);
     vector<string> words(word_list.begin(), word_list.end());
     map<string, int> word_index;
-    for (int i = 0; i < words.size(); i++) {
+    for (size_t i = 0; i < words.size(); i++) {
         word_index[words[i]] = i;
     }
     vector<int> previous;
